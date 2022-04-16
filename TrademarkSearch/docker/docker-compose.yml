@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  postgres:
+      image: postgres:13
+      environment:
+        POSTGRES_DB: trademark
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+      volumes:
+          - ./script.sql:/docker-entrypoint-initdb.d/init.sql
+      networks:
+         - trademarknet
+   
+  app:
+      image: openjdk:11
+      ports:
+        - 8080:8080
+      depends_on:
+        - postgres
+      volumes:
+        - ./app/:/opt/app/
+      working_dir: /opt/app
+      command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 10; done; java -Xmx512m -jar trademark.jar'
+      networks:
+         - trademarknet
+
+networks:
+  trademarknet:
+    name: trademark-lucian-davidescu
