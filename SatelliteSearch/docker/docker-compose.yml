@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  postgres:
+      image: postgres:15
+      environment:
+        POSTGRES_DB: satellite
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+      networks:
+         - satellitenet
+   
+  app:
+      image: openjdk:17
+      ports:
+        - 8080:8080
+      depends_on:
+        - postgres
+      volumes:
+        - ./app/:/opt/app/
+      working_dir: /opt/app
+      command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 5; done; java -Xmx512m -jar satellite-backend-0.0.1-SNAPSHOT.jar'
+      networks:
+         - satellitenet
+
+networks:
+  satellitenet:
+    name: satellite-ai.build
