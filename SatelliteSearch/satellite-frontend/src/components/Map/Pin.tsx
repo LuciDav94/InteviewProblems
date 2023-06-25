@@ -10,6 +10,7 @@ const pinStyle = {
   stroke: 'none',
 };
 
+// eslint-disable-next-line react/prop-types
 function Pin({ size = 20 }) {
   return (
     <svg height={size} viewBox='0 0 24 24' style={pinStyle}>

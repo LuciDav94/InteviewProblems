@@ -9,18 +9,18 @@ import Map, {
 } from 'react-map-gl';
 
 import { useAppSelector } from '~/hooks/useAppSelector';
-import { selectCurrentEntry, selectList } from '~/store/slices/satellite';
+import { selectCurrentSatellite, selectList, setCurrentSatellite } from '~/store/slices/satellite';
 import { Satellite } from '~/types/satellite';
 import Pin from '~/components/Map/Pin';
 import { Container, Typography } from '@mui/material';
-
-const TOKEN =
-  'pk.eyJ1IjoiY2FuZGFzNDAwIiwiYSI6ImNsamJuOW96NzAxczUzY3FtcXNnbTVqYmwifQ.P-vJe5tb-mF7Vf9R0NGVbg'; // Set your mapbox token here
+import { useAppDispatch } from '~/hooks/useAppDispatch';
 
 export default function SatelliteMap() {
   const [popupInfo, setPopupInfo] = useState<Satellite | null>(null);
   const satellites = useAppSelector(selectList);
-  const selectedSatellite = useAppSelector(selectCurrentEntry);
+  const selectedSatellite = useAppSelector(selectCurrentSatellite);
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (selectedSatellite) {
@@ -54,11 +54,13 @@ export default function SatelliteMap() {
             // with `closeOnClick: true`
             e.originalEvent.stopPropagation();
             setPopupInfo(element);
+            dispatch(setCurrentSatellite(element));
           }}
         >
           <Pin />
         </Marker>
       )),
+    // eslint-disable-next-line
     [satellites],
   );
 
@@ -78,7 +80,7 @@ export default function SatelliteMap() {
         onMove={(evt) => setViewState(evt.viewState)}
         {...viewState}
         mapStyle='mapbox://styles/mapbox/dark-v9'
-        mapboxAccessToken={TOKEN}
+        mapboxAccessToken={import.meta.env.VITE_MAP_TOKEN}
       >
         <GeolocateControl position='top-left' />
         <FullscreenControl position='top-left' />
@@ -92,6 +94,7 @@ export default function SatelliteMap() {
             latitude={Number(popupInfo.latitude)}
             onClose={() => setPopupInfo(null)}
           >
+            <Typography>Id: {popupInfo.id}</Typography>
             <Typography>Name: {popupInfo.name}</Typography>
             <Typography>Owner: {popupInfo.owner}</Typography>
             <Typography>Latitude: {popupInfo.latitude}</Typography>

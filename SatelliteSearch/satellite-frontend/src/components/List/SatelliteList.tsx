@@ -2,6 +2,7 @@ import {
   Button,
   IconButton,
   MenuItem,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -15,11 +16,13 @@ import { Satellite } from '~/types/satellite';
 import { Iconify } from '~/components/Iconify';
 import { MenuPopover } from '~/components/MenuPopover';
 import {
+  selectCurrentSatellite,
   selectFilterText,
   selectList,
   selectUpdateSearch,
-  setCurrentEntry,
+  setCurrentSatellite,
   setList,
+  setUpdateSearch,
 } from '~/store/slices/satellite';
 import { useAppSelector } from '~/hooks/useAppSelector';
 import SatelliteDialog from '~/components/Dialog/SatelliteDialog';
@@ -32,22 +35,24 @@ export default function SatelliteList() {
   const [deleteSatellite, deleteSatelliteResult] = useDeleteSatelliteMutation();
 
   const [openPopover, setOpenPopover] = useState<HTMLElement | null>(null);
-  const [selectedSatellite, setSelectedSatellite] = useState<Satellite | null>(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
 
   const updateSearch = useAppSelector(selectUpdateSearch);
   const filterText = useAppSelector(selectFilterText);
   const satellites = useAppSelector(selectList);
+  const currentSatellite = useAppSelector(selectCurrentSatellite);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     getSatellites();
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     getSatellites();
+    // eslint-disable-next-line
   }, [updateSearch, filterText]);
 
   useEffect(() => {
@@ -67,16 +72,16 @@ export default function SatelliteList() {
       }
     }
     error && console.log('error', error);
+    // eslint-disable-next-line
   }, [getSatellitesResult, filterText]);
 
   const listItemOnClick = (element: any) => {
-    dispatch(setCurrentEntry(element));
-    setSelectedSatellite(element);
+    dispatch(setCurrentSatellite(element));
   };
 
   const handleOpenPopover = (event: React.MouseEvent<HTMLElement>, satellite: Satellite) => {
     setOpenPopover(event.currentTarget);
-    setSelectedSatellite(satellite);
+    dispatch(setCurrentSatellite(satellite));
   };
 
   const handleClosePopover = () => {
@@ -101,8 +106,8 @@ export default function SatelliteList() {
   };
 
   const handleDelete = () => {
-    if (selectedSatellite) {
-      deleteSatellite(selectedSatellite?.id);
+    if (currentSatellite) {
+      deleteSatellite(currentSatellite?.id);
     }
   };
 
@@ -114,19 +119,20 @@ export default function SatelliteList() {
         });
       } else {
         enqueueSnackbar(
-          'Satellite with id: ' + selectedSatellite?.id + ' was deleted successfully!',
+          'Satellite with id: ' + currentSatellite?.id + ' was deleted successfully!',
         );
-        setSelectedSatellite(null);
+        dispatch(setCurrentSatellite(null));
+        dispatch(setUpdateSearch());
         handleCloseConfirm();
         handleClosePopover();
-        getSatellites();
       }
     }
+    // eslint-disable-next-line
   }, [deleteSatelliteResult]);
 
   return (
     <>
-      <TableContainer>
+      <TableContainer sx={{ maxHeight: '600px' }}>
         <Table>
           <TableBody>
             {satellites?.map((element: Satellite, index: number) => (
@@ -135,12 +141,15 @@ export default function SatelliteList() {
                   cursor: 'pointer',
                 }}
                 key={index}
-                selected={selectedSatellite === element}
+                selected={currentSatellite?.id === element.id}
               >
                 <TableCell onClick={(event) => event && listItemOnClick(element)}>
-                  <Typography noWrap variant='inherit'>
-                    {element.name}
-                  </Typography>
+                  <Stack direction={'row'} spacing={1}>
+                    <Iconify icon={'mdi:satellite-variant'} />
+                    <Typography noWrap variant='inherit'>
+                      {element.name}
+                    </Typography>
+                  </Stack>
                 </TableCell>
                 <TableCell
                   align='right'
@@ -162,7 +171,7 @@ export default function SatelliteList() {
             ))}
             {satellites.length === 0 && (
               <TableRow>
-                <TableCell colSpan={12}>No satellites, proceed with creation</TableCell>
+                <TableCell colSpan={12}>No data...</TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -188,7 +197,7 @@ export default function SatelliteList() {
       <SatelliteDialog
         title={'Update'}
         open={openEditDialog}
-        existingSatellite={selectedSatellite}
+        existingSatellite={currentSatellite}
         onClose={handleCloseEditDialog}
       />
 
@@ -196,7 +205,7 @@ export default function SatelliteList() {
         open={openConfirm}
         onClose={handleCloseConfirm}
         title='Delete'
-        content={<>Are you sure you want to delete the satellite - {selectedSatellite?.name}?</>}
+        content={<>Are you sure you want to delete the satellite - {currentSatellite?.name}?</>}
         action={
           <Button
             variant='contained'

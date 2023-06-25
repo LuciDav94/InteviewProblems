@@ -13,7 +13,7 @@ import { defaultSatellite, Satellite } from '~/types/satellite';
 import { enqueueSnackbar } from '../Snackbar';
 import { Iconify } from '~/components/Iconify';
 import { useCreateSatelliteMutation, usePutSatelliteMutation } from '~/api/satellite';
-import { setCurrentEntry, setUpdateSearch } from '~/store/slices/satellite';
+import { setCurrentSatellite, setUpdateSearch } from '~/store/slices/satellite';
 import { useAppDispatch } from '~/hooks/useAppDispatch';
 
 // ----------------------------------------------------------------------
@@ -53,6 +53,7 @@ export default function SatelliteDialog({
         handleClose();
       }
     }
+    // eslint-disable-next-line
   }, [createSatelliteResult]);
 
   useEffect(() => {
@@ -66,16 +67,18 @@ export default function SatelliteDialog({
           'Satellite with id: ' + putSatelliteResult.data.id + ' was updated successfully!',
         );
         dispatch(setUpdateSearch());
-        dispatch(setCurrentEntry(putSatelliteResult.data));
+        dispatch(setCurrentSatellite(putSatelliteResult.data));
         handleClose();
       }
     }
+    // eslint-disable-next-line
   }, [putSatelliteResult]);
 
   useEffect(() => {
     if (existingSatellite) {
       setSatellite(existingSatellite);
     }
+    // eslint-disable-next-line
   }, [open]);
 
   const handleClose = () => {

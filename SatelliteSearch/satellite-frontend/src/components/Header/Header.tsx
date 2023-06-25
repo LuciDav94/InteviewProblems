@@ -3,7 +3,7 @@ import { Iconify } from '~/components/Iconify';
 import { useState } from 'react';
 import SatelliteDialog from '~/components/Dialog/SatelliteDialog';
 import { useAppDispatch } from '~/hooks/useAppDispatch';
-import { selectFilterText, setFilterText } from '~/store/slices/satellite';
+import { selectFilterText, setCurrentSatellite, setFilterText } from '~/store/slices/satellite';
 import { useAppSelector } from '~/hooks/useAppSelector';
 
 export default function Header() {
@@ -15,10 +15,12 @@ export default function Header() {
 
   const handleFilterText = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setFilterText(event.target.value));
+    dispatch(setCurrentSatellite(null));
   };
 
   const handleClearAll = () => {
     dispatch(setFilterText(''));
+    dispatch(setCurrentSatellite(null));
   };
 
   const handleOpenDialog = () => {

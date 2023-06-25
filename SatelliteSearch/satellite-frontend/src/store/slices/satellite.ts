@@ -5,7 +5,7 @@ import type { RootState } from '../store';
 import { Satellite } from '~/types/satellite';
 
 export interface SatelliteState {
-  currentEntry: Satellite | null;
+  currentSatellite: Satellite | null;
   list: Satellite[];
   updateSearch: boolean;
   filterText: string;
@@ -13,7 +13,7 @@ export interface SatelliteState {
 
 const initialState: SatelliteState = {
   list: [],
-  currentEntry: null,
+  currentSatellite: null,
   updateSearch: false,
   filterText: '',
 };
@@ -22,8 +22,8 @@ export const satelliteSlice = createSlice({
   name: 'satellite',
   initialState,
   reducers: {
-    setCurrentEntry: (state, action: PayloadAction<Satellite | null>) => {
-      state.currentEntry = action.payload;
+    setCurrentSatellite: (state, action: PayloadAction<Satellite | null>) => {
+      state.currentSatellite = action.payload;
     },
     setFilterText: (state, action: PayloadAction<string>) => {
       state.filterText = action.payload;
@@ -38,9 +38,10 @@ export const satelliteSlice = createSlice({
   },
 });
 
-export const { setCurrentEntry, setFilterText, setList, setUpdateSearch } = satelliteSlice.actions;
+export const { setCurrentSatellite, setFilterText, setList, setUpdateSearch } =
+  satelliteSlice.actions;
 
-export const selectCurrentEntry = (state: RootState) => state.satellite.currentEntry;
+export const selectCurrentSatellite = (state: RootState) => state.satellite.currentSatellite;
 export const selectUpdateSearch = (state: RootState) => state.satellite.updateSearch;
 export const selectFilterText = (state: RootState) => state.satellite.filterText;
 export const selectList = (state: RootState) => state.satellite.list;
