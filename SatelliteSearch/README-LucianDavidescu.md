@@ -13,10 +13,14 @@ file for the Nginx server, and the application.properties file used to define ba
 ## **Project structure**
 
 -> satellite-backend - Server written in Java with Spring Boot and Postgres for the database.
+ 
+                     - Execute mvn clean package to execute tests and generate the JAR file
 
 -> satellite-frontend - Frontend part written in React with TypeScript, Redux for state management, 
 Vite for build and development server, and Yarn for dependency management. The design incorporates 
 components imported from mui.com.
+
+                      - Execute yarn build to generate the 'dist' folder with the sources
 
 ## **Project description**
 
