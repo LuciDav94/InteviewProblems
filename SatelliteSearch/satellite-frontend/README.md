@@ -14,6 +14,12 @@ yarn install
 yarn dev
 ```
 
+3.Build Project
+
+```
+yarn build
+```
+
 ## **Options ✍️**
 
 1. Check lint
@@ -44,4 +50,9 @@ yarn prettier:fix
 
 ```
 yarn format
+```
+6. Run tests
+
+```
+yarn test
 ```
